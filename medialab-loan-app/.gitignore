@@ -42,3 +42,4 @@ build/
 /captures
 .externalNativeBuild
 /out
+src/main/resources/application.properties
