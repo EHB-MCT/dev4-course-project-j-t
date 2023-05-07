@@ -16,7 +16,7 @@ class UserService {
         return userRepository.findAll()
     }
 
-    fun saveUser(u : CreateUserRequest): User{
+    fun saveUser(u : CreateUserRequest): User {
         logger.info("Saving user: $u")
         try {
             val newUser = User(firstname = u.firstname, lastname = u.lastname, email = u.email, password = u.password, isAdmin = u.isAdmin)
@@ -27,6 +27,10 @@ class UserService {
             logger.error("Error saving user: $u, error: $ex")
             throw ex
         }
+    }
+
+    fun getUserByEmail(email: String): User? {
+        return userRepository.findByEmail(email)
     }
 
     companion object {
