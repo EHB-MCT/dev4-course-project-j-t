@@ -38,16 +38,19 @@ class UserController {
             throw ex
         }
     }
+    data class LoginResponse(val success: Boolean, val message: String,val userId: Long?)
 
     @PostMapping("login")
-    fun loginUser(@RequestBody loginRequest: CreateLoginRequest): Boolean{
+    fun loginUser(@RequestBody loginRequest: CreateLoginRequest): LoginResponse{
         val user = service.getUserByEmail(loginRequest.email)
         if (user != null && user.password == loginRequest.password){
-            logger.info("Uer logged in succesfully: $user")
-            return true
+            val message = "User logged in succesfully: $user"
+            logger.info(message)
+            return LoginResponse(true, message, user.id)
         }else {
-            logger.info("Invalid login attempt for email : ${loginRequest.email}")
-            return false
+            val message = "Invalid login attempt for email : ${loginRequest.email}"
+            logger.info(message)
+            return LoginResponse(false, message, null)
         }
     }
 
