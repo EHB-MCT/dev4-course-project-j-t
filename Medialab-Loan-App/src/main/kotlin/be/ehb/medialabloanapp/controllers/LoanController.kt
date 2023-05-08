@@ -5,10 +5,7 @@ import be.ehb.medialabloanapp.models.Loan
 import be.ehb.medialabloanapp.services.LoanService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 
 @RestController
@@ -30,6 +27,15 @@ class LoanController {
             throw ex
         }
     }
+
+    @GetMapping
+    fun getLoansByUserId(@RequestParam userId: Long): List<Loan> {
+        logger.info("Fetching loans for user with id $userId")
+        return service.getLoansByUserId(userId)
+    }
+
+
+
 
 
     companion object {
