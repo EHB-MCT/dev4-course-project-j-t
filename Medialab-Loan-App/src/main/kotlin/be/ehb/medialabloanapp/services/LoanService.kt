@@ -34,6 +34,11 @@ class LoanService {
         }
     }
 
+    fun getLoansByUserId(userId: Long): List<Loan> {
+        // Use the loanRepository to fetch loans by user id
+        return loanRepository.findByUserId(userId)
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(LoanService::class.java)
     }
