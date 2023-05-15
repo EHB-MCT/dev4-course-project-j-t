@@ -1,6 +1,5 @@
 package be.ehb.medialabloanapp.services
 
-import be.ehb.medialabloanapp.dto.CreateUserRequest
 import be.ehb.medialabloanapp.models.User
 import be.ehb.medialabloanapp.repositories.UserRepository
 import org.slf4j.LoggerFactory
@@ -10,30 +9,55 @@ import org.springframework.stereotype.Service
 @Service
 class UserService {
 
+
     @Autowired
     lateinit var userRepository: UserRepository
-    fun getAllUsers(): MutableList<User>{
-        return userRepository.findAll()
-    }
 
-    fun saveUser(u : CreateUserRequest): User {
-        logger.info("Saving user: $u")
-        try {
-            val newUser = User(firstname = u.firstname, lastname = u.lastname, email = u.email, password = u.password, isAdmin = u.isAdmin)
-            val savedUser = userRepository.save(newUser)
-            logger.info("User saved successfully: $savedUser")
-            return savedUser
-        } catch (ex: Exception) {
-            logger.error("Error saving user: $u, error: $ex")
-            throw ex
+    fun getUser(id: Long): User {
+        val user = userRepository.findById(id)
+        if (user.isPresent){
+            return user.get()
+        }else{
+            val erroMessage = "User not found with id: $id"
+            logger.error(erroMessage)
+            throw RuntimeException(erroMessage)
         }
     }
 
-    fun getUserByEmail(email: String): User? {
-        return userRepository.findByEmail(email)
+    fun createUser(user: User): User {
+        val email = user.email!!
+        val existingUser = userRepository.findByEmail(email)
+        if (existingUser != null) {
+            val errorMessage = "User with this email already exists"
+            logger.error(errorMessage)
+            throw RuntimeException(errorMessage)
+        }
+        return userRepository.save(user)
     }
 
-    companion object {
+    fun login(email: String, password:String):User{
+        val user = userRepository.findByEmail(email) ?: throw RuntimeException("User not found with email: $email")
+        if (user.password != password) {
+            throw RuntimeException("Invalid password")
+        }else{
+
+        }
+        return user
+    }
+
+    fun getAllUsers(): List<User> {
+        return userRepository.findAll()
+    }
+
+    fun updateUserAdminStatus(id: Long, isAdmin: Boolean): User {
+        val user = userRepository.findById(id).orElseThrow { RuntimeException("User not found with id: $id") }
+        user.isAdmin = isAdmin
+        return userRepository.save(user)
+    }
+
+    companion object{
         private val logger = LoggerFactory.getLogger(UserService::class.java)
     }
+
+
 }

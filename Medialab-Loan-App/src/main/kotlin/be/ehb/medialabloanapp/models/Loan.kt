@@ -1,9 +1,7 @@
 package be.ehb.medialabloanapp.models
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import com.fasterxml.jackson.annotation.JsonManagedReference
+import jakarta.persistence.*
 import java.time.LocalDate
 
 
@@ -11,10 +9,24 @@ import java.time.LocalDate
 @Table(name="loans")
 data class Loan(
     @Id
-    @GeneratedValue
-    var id: Long = -1,
-    val userId: Long,
-    val itemId: Long,
-    val startDate: LocalDate,
-    val endDate: LocalDate
-)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    @JsonManagedReference
+    var user: User? = null,
+
+    @OneToOne(optional = false)
+    @JoinColumn(name ="item_id")
+    @JsonManagedReference
+    var item: Item? = null,
+
+    var description: String? = null,
+    var startDate: LocalDate? = null,
+    var endDate: LocalDate? = null,
+){
+
+
+
+}
