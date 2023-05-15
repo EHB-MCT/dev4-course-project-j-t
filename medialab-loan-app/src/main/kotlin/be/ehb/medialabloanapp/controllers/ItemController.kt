@@ -1,39 +1,81 @@
 package be.ehb.medialabloanapp.controllers
 
-import be.ehb.medialabloanapp.dto.CreateItemRequest
+
+import be.ehb.medialabloanapp.dto.ItemDto
 import be.ehb.medialabloanapp.models.Item
 import be.ehb.medialabloanapp.services.ItemService
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.net.URI
 
-
+@CrossOrigin
 @RestController
-@RequestMapping("item")
+@RequestMapping("/items")
 class ItemController {
 
     @Autowired
-    lateinit var service: ItemService
+    lateinit var itemService: ItemService
+
+    // get item by its id.
+    @GetMapping("/{id}")
+    fun getItem(@PathVariable("id") id:Long): ResponseEntity<ItemDto>{
+        val item = itemService.getItem(id)
+        val itemDto = ItemDto(
+            id = item.id,
+            name = item.name,
+            img = item.img,
+            description = item.description,
+            availability = item.availability,
+
+        )
+        return ResponseEntity.ok(itemDto)
+    }
+
+    // creating a new item.
+    @PostMapping
+    fun createItem(@RequestBody itemDto: ItemDto): ResponseEntity<ItemDto>{
+        val item = Item(
+            description = itemDto.description,
+            name = itemDto.name,
+            img = itemDto.img,
+            availability = itemDto.availability,
+
+        )
+        val createdItem = itemService.createItem(item)
+        val createdItemDto = ItemDto(
+            id= createdItem.id,
+            img = createdItem.img,
+            description = createdItem.description,
+            name = createdItem.name,
+            availability = createdItem.availability,
+
+        )
+        return ResponseEntity.created(URI.create("/items/${createdItemDto.id}")).body(createdItemDto)
+    }
+
+    // deleting an item by its id.
+    @DeleteMapping("/{id}")
+    fun deleteItem(@PathVariable("id") id:Long): ResponseEntity<String>{
+        itemService.deleteItem(id)
+        return ResponseEntity.ok("The item is succesfully deleted, and also the corresponding loans")
+    }
+
+
 
     @GetMapping
-    fun index(): MutableList<Item>{
-        return service.getAllItems()
-    }
+    fun getAllItems(): ResponseEntity<List<ItemDto>>{
+        val items = itemService.getAllItems().map{item ->
+            ItemDto(
+                id= item.id,
+                img = item.img,
+                description = item.description,
+                name = item.name,
+                availability = item.availability,
 
-    @PostMapping
-    fun saveUser(@RequestBody i: CreateItemRequest): Item {
-        logger.info("Received item to save: $i")
-        try {
-            val savedItem = service.saveItem(i)
-            logger.info("item saved successfully: $savedItem")
-            return savedItem
-        } catch (ex: Exception) {
-            logger.error("Error saving item: $i, error: $ex")
-            throw ex
+            )
         }
+        return ResponseEntity.ok(items)
     }
 
-    companion object {
-        private val logger = LoggerFactory.getLogger(ItemController::class.java)
-    }
 }

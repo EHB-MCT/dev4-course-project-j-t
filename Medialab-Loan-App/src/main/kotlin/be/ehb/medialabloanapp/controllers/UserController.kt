@@ -1,60 +1,99 @@
 package be.ehb.medialabloanapp.controllers
 
-import be.ehb.medialabloanapp.dto.CreateLoginRequest
-import be.ehb.medialabloanapp.dto.CreateUserRequest
+import be.ehb.medialabloanapp.dto.LoginCredentialsDto
+import be.ehb.medialabloanapp.dto.UserDto
 import be.ehb.medialabloanapp.models.User
-
-
 import be.ehb.medialabloanapp.services.UserService
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import java.net.URI
+@CrossOrigin
 @RestController
-@RequestMapping("user")
+@RequestMapping("/users")
 class UserController {
 
     @Autowired
-    lateinit var service: UserService
+    lateinit var userService: UserService
 
+    // get user by id.
+    @GetMapping("/{id}")
+    fun getUser(@PathVariable("id") id: Long): ResponseEntity<UserDto>{
+        val user = userService.getUser(id)
+        val userDto = UserDto(
+            id = user.id,
+            firstName = user.firstName,
+            lastName = user.lastName,
+            email = user.email,
+            isAdmin = user.isAdmin
+
+        )
+        return ResponseEntity.ok(userDto)
+    }
+
+    // create (register) a user
+    @PostMapping
+    fun createUser(@RequestBody userDto: UserDto):ResponseEntity<UserDto>{
+        val user = User(
+            firstName = userDto.firstName,
+            lastName = userDto.lastName,
+            password = userDto.password,
+            email = userDto.email,
+            isAdmin = userDto.isAdmin,
+        )
+        val createdUser = userService.createUser(user)
+        val createdUserDto = UserDto(
+            id = createdUser.id,
+            firstName = createdUser.firstName,
+            lastName = createdUser.lastName,
+            isAdmin = createdUser.isAdmin,
+            email = createdUser.email,
+        )
+        return ResponseEntity.created(URI.create("/users/${createdUserDto.id}")).body(createdUserDto)
+    }
+
+    // login in the user by email and password
+    @PostMapping("/login")
+    fun login(@RequestBody loginCredentialsDto: LoginCredentialsDto):ResponseEntity<UserDto>{
+        val user = userService.login(loginCredentialsDto.email, loginCredentialsDto.password)
+        val userDto = UserDto(
+            id = user.id,
+            firstName = user.firstName,
+            lastName = user.lastName,
+            isAdmin = user.isAdmin,
+            email = user.email,
+        )
+        return ResponseEntity.ok(userDto)
+    }
+
+    // get all the users.
     @GetMapping
-    fun index(): MutableList<User>{
-        return service.getAllUsers()
-    }
-
-    @PostMapping("register")
-    fun saveUser(@RequestBody u: CreateUserRequest): User {
-        logger.info("Received user to save: $u")
-        try {
-            val savedUser = service.saveUser(u)
-            logger.info("User saved successfully: $savedUser")
-            return savedUser
-        }catch (ex: Exception) {
-            logger.error("Error saving user: $u, error: $ex")
-            throw ex
+    fun getAllUser(): ResponseEntity<List<UserDto>>{
+        val users = userService.getAllUsers().map{user ->
+            UserDto(
+                id= user.id,
+                firstName = user.firstName,
+                lastName = user.lastName,
+                email = user.email,
+                isAdmin = user.isAdmin
+            )
         }
-    }
-    data class LoginResponse(val success: Boolean, val message: String,val userId: Long?)
-
-    @PostMapping("login")
-    fun loginUser(@RequestBody loginRequest: CreateLoginRequest): LoginResponse{
-        val user = service.getUserByEmail(loginRequest.email)
-        if (user != null && user.password == loginRequest.password){
-            val message = "User logged in succesfully: $user"
-            logger.info(message)
-            return LoginResponse(true, message, user.id)
-        }else {
-            val message = "Invalid login attempt for email : ${loginRequest.email}"
-            logger.info(message)
-            return LoginResponse(false, message, null)
-        }
+        return ResponseEntity.ok(users)
     }
 
-    companion object {
-        private val logger = LoggerFactory.getLogger(UserController::class.java)
+    // update the isAdmin state to give rights to the user.
+    @PutMapping("/{id}/admin")
+    fun updateUserAdminStatus(@PathVariable("id") id: Long, @RequestParam("isAdmin") isAdmin: Boolean): ResponseEntity<UserDto> {
+        val updatedUser = userService.updateUserAdminStatus(id, isAdmin)
+        val userDto = UserDto(
+            id = updatedUser.id,
+            firstName = updatedUser.firstName,
+            lastName = updatedUser.lastName,
+            email = updatedUser.email,
+            isAdmin = updatedUser.isAdmin
+        )
+        return ResponseEntity.ok(userDto)
     }
+
+
 }

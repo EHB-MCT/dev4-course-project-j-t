@@ -1,23 +1,24 @@
 package be.ehb.medialabloanapp.models
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import com.fasterxml.jackson.annotation.JsonBackReference
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "users")
 data class User(
     @Id
-    @GeneratedValue
-    var id: Long = -1,
-    var firstname: String,
-    var lastname: String,
-    var email: String,
-    var password: String,
-    var isAdmin: Boolean
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
+    var firstName: String? = null,
+    var lastName: String? = null,
+    var email: String? = null,
+    var password: String? = null,
+    var isAdmin: Boolean = false,
 
+
+    @OneToMany(mappedBy = "user" , cascade = [CascadeType.ALL])
+    @JsonBackReference
+    var loans: List<Loan> = emptyList(),
 ){
-
 
 }
