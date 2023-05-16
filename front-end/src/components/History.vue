@@ -35,7 +35,6 @@ export default {
                         <th>ID</th>
                         <th>Gebruikers</th>
                         <th>Item</th>
-                        <th>lening</th>
                         <th>Beschrijving</th>
                         <th>Begonnen datum</th>
                         <th>Eind datum</th>
@@ -46,7 +45,6 @@ export default {
                         <td>{{ history.id }}</td>
                         <td>{{ history.userId }}</td>
                         <td>{{ history.itemId }}</td>
-                        <td>{{ history.loanId }}</td>
                         <td>{{ history.description }}</td>
                         <td>{{ history.startDate }}</td>
                         <td>{{ history.endDate }}</td>
