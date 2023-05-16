@@ -21,7 +21,6 @@ export default {
     }
 }
 </script>
-
 <template>
     <header>
         <Nav />
