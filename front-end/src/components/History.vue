@@ -21,7 +21,6 @@ export default {
     }
 }
 </script>
-
 <template>
     <header>
         <Nav />
@@ -43,8 +42,8 @@ export default {
                 <tbody>
                     <tr v-for="history in this.history" :key="history.id">
                         <td>{{ history.id }}</td>
-                        <td>{{ history.userId }}</td>
-                        <td>{{ history.itemId }}</td>
+                        <td>{{ history.user.email }}</td>
+                        <td>{{ history.item.name }}</td>
                         <td>{{ history.description }}</td>
                         <td>{{ history.startDate }}</td>
                         <td>{{ history.endDate }}</td>
