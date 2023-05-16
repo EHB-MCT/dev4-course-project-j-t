@@ -66,9 +66,9 @@ class LoanService(private val itemService: ItemService) {
 
             // Create a new history loan record using the existing loan's data
             val historyLoan = HistoryLoan(
-                loanId = loan.id,
-                userId = loan.user?.id,
-                itemId = loan.item?.id,
+
+                user = loan.user,
+                item = loan.item,
                 description = loan.description,
                 startDate = loan.startDate,
                 endDate = loan.endDate
