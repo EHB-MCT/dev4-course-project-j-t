@@ -105,6 +105,12 @@ class LoanService(private val itemService: ItemService) {
         }
     }
 
+    fun getLoanByItemId(itemId:Long): Loan?{
+        return loanRepository.findByItemId(itemId)
+
+    }
+
+
 
     companion object {
         private val logger = LoggerFactory.getLogger(LoanService::class.java)
