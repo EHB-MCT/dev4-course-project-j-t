@@ -57,24 +57,22 @@ export default {
         <Nav />
     </header>
     <main>
-
-
-        <div class="container">
-            <form>
+        <div id="container-createItem">
+            <form id="form">
                 <div class="form-group">
-                    <h2 class="h2">Create new item</h2>
-                    <label for="name">Name:</label>
+                    <h2 class="h2">Nieuw item maken</h2><br>
+                    <label for="name">Naam:</label>
                     <input type="text" class="form-control" id="name" v-model="name" required>
-                </div>
+                </div><br>
                 <div class="form-group">
-                    <label for="description">Description:</label>
+                    <label for="description">Beschrijving:</label>
                     <textarea class="form-control" id="description" v-model="description" required></textarea>
-                </div>
+                </div><br>
                 <div class="form-group">
-                    <label for="url">URL-image:</label>
+                    <label for="url">URL-afbeelding:</label>
                     <input type="url" class="form-control" id="url" v-model="imageUrl" required>
                 </div><br>
-                <button type="submit" class="btn btn-primary" @click.prevent="createItem">Create new item</button>
+                <button type="submit" class="btn btn-primary" @click.prevent="createItem">Nieuw item maken</button>
             </form>
         </div><br><br>
         <div id="err-message" v-if="errorMessage" :class="['alert', classAlert ? 'alert-success' : 'alert-danger']">{{
@@ -83,6 +81,16 @@ export default {
 </template>
 
 <style>
+#container-createItem {
+    width: 90%;
+    margin: auto;
+    margin-top: 2%;
+    background-color: rgb(242, 242, 242);
+    padding: 50px;
+    border-radius: 30px;
+    font-size: 1.2em;
+}
+
 #err-message {
     width: 90%;
     margin: auto;

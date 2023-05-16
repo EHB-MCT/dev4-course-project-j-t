@@ -12,27 +12,27 @@ export default {
   },
   methods: {
     async login() {
-      if(this.email && this.password){
+      if (this.email && this.password) {
         const response = await fetch("http://localhost:8080/users/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: this.email, password: this.password }),
         })
-        .then((response) => response.text())
+          .then((response) => response.text())
           .then((data) => {
             data = JSON.parse(data)
-          if(data.status == 500){
-            this.errorMessage = data.message
-          }else{
-              sessionStorage.setItem("user",JSON.stringify(data))
+            if (data.status == 500) {
+              this.errorMessage = data.message
+            } else {
+              sessionStorage.setItem("user", JSON.stringify(data))
               this.$router.push('/Item')
-          }
-          })   
-      }else{
-        this.errorMessage ="Fill in all fields."
+            }
+          })
+      } else {
+        this.errorMessage = "Fill in all fields."
       }
     },
-    async register(){
+    async register() {
       this.$router.push('/Register')
     }
   },
@@ -41,24 +41,52 @@ export default {
 </script>
   
 <template>
-    <div class="container">
+  <div id="container">
+    <form id="chatForm" @submit.prevent="login">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" class="form-control" id="email" v-model="email">
+      </div><br>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" v-model="password">
+      </div><br>
+      <button type="submit" class="btn btn-primary" id="login">login</button>
+      <button @click="register" type="submit" class="btn btn-primary" id="register">Register</button>
+      <br><br>
       <div v-if="errorMessage" class="alert alert-danger">{{ this.errorMessage }}</div>
-      <form id="chatForm" @submit.prevent="login">
-        <div class="form-group">
-          <label for="email">E-mail</label>
-          <input type="email" class="form-control" id="email" v-model="email">
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" class="form-control" id="password" v-model="password">
-        </div><br>
-        <button type="submit" class="btn btn-primary" >login</button>
-      </form>  <br>
-        <button @click="register" type="submit" class="btn btn-primary" >Register</button>
-    </div>
-  </template>
+    </form> <br>
+
+  </div>
+</template>
   
-  <style>
- 
-  </style>
-  
+<style>
+#container {
+  background-image: url("../../public/pexels-kritsada-seekham-7836295.jpg");
+  background-position: top;
+  background-size: cover;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#chatForm {
+  width: 40%;
+  background-color: rgba(255, 255, 255, 0.685);
+  padding: 80px 50px;
+  color: black;
+  font-size: 1.5rem;
+  border-radius: 30px;
+}
+
+#login,
+#register {
+  width: 40%;
+}
+
+#login {
+  margin-right: 20%;
+}
+</style>
