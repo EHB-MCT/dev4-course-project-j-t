@@ -13,7 +13,7 @@ export default {
             description: null,
             errorMessage: null,
             classAlert: null,
-            searchQuery: '',
+            searchText: '',
         }
     },
     methods: {
@@ -74,7 +74,8 @@ export default {
     },
     computed: {
         filteredItems() {
-            return this.items.filter(item => item.availability);
+            const searchQuery = this.searchText.trim().toLowerCase();
+            return this.items.filter(item => item.name.toLowerCase().includes(searchQuery) && item.availability);
         },
     },
     components: {
@@ -89,53 +90,55 @@ export default {
         <Nav />
     </header>
     <main>
-        <div class="container">
+        <div id="container-createLoan">
             <div id="err-message" v-if="errorMessage" :class="['alert', classAlert ? 'alert-success' : 'alert-danger']">{{
-                this.errorMessage }}</div>
-            <h1>Create new loan</h1>
+                this.errorMessage }}
+            </div>
+            <h1>Create new loan</h1><br>
             <form @submit.prevent="createLoan">
                 <div class="form-group">
-                    <label for="selectUser">Select user::</label>
+                    <label for="selectUser">Selecteer gebruiker:</label>
                     <div class="select-wrapper">
                         <select id="selectUser" class="form-control" v-model="selectedUser" data-live-search="true">
                             <option v-for="user in users" :key="user.id" :value="user.id">{{ user.firstName }} {{
                                 user.lastName }}</option>
                         </select>
                     </div>
-                </div>
+                </div><br>
                 <div class="form-group">
-                    <label for="item">Item</label>
+                    <label for="item">Selecteer een item uit de lijst:</label>
                     <input type="hidden" id="item" class="form-control" v-model="selectedItem.id" v-if="selectedItem">
-                    <p v-if="selectedItem">{{ selectedItem.name }}</p>
-                </div>
+                    <!-- <input v-if="selectedItem">{{ selectedItem.name }}> -->
+                    <input v-if="selectedItem" type="text" class="form-control" v-model="selectedItem.name">
+                </div><br>
                 <div class="form-group">
                     <label for="description">Beschrijving:</label>
                     <textarea id="description" class="form-control" v-model="description"></textarea>
-                </div>
+                </div><br>
                 <div class="form-group">
-                    <label for="startDate">Startdatum:</label>
+                    <label for="startDate">Begin datum:</label>
                     <input type="date" id="startDate" class="form-control" v-model="startDate">
-                </div>
+                </div><br>
                 <div class="form-group">
                     <label for="endDate">Einddatum:</label>
                     <input type="date" id="endDate" class="form-control" v-model="endDate">
                 </div><br>
-                <button type="submit" class="btn btn-primary">Verzenden</button>
-            </form><br><br><br>
-
-            <div class="form-group">
-                <input type="text" class="form-control" v-model="searchQuery" @keyup="searchItems"
-                    placeholder="Search items">
-            </div><br><br>
-
+                <button type="submit" class="btn btn-primary">Nieuwe lening maken</button>
+            </form><br>
+            <hr>
+            <h4>Selecteer een item uit de lijst</h4> <br>
+            <div id="filter">
+                <input class="form-control mb-4" id="search-input" type="text" v-model="searchText" @keyup="searchItems"
+                    placeholder="Zoek op artikelnaam">
+            </div>
             <div class="items">
-                <div class="row" v-for="item in filteredItems" :key="item.id" @click="selectItem(item)"
+                <div class="row" id="row" v-for="item in filteredItems" :key="item.id" @click="selectItem(item)"
                     :class="{ 'selected': item === selectedItem }">
-                    <div class="col-md-4" v-if="item.img">
+                    <div class="col-md-4" v-if="item.img" id="img-item">
                         <img class="img-fluid" :src="item.img">
                     </div>
-                    <div class="col-md-8">
-                        <h5 class="card-title">{{ item.name }}</h5>
+                    <div class="col-md-8" id="tekst-container">
+                        <h5 class="card-title" id="card-title">{{ item.name }}</h5>
                         <p class="card-text" id="card-description">{{ item.description }}</p>
                         <p class="card-text" id="availability-text"
                             :class="{ 'available': item.availability, 'not-available': !item.availability }">
@@ -145,26 +148,61 @@ export default {
                 </div>
             </div>
         </div>
+        <br>
     </main>
 </template>
 
 <style>
+#container-createLoan {
+    width: 90%;
+    margin: auto;
+    margin-top: 2%;
+    background-color: rgb(242, 242, 242);
+    padding: 50px;
+    border-radius: 30px;
+    font-size: 1.2em;
+
+}
+
 .selected {
-    border: 2px solid green;
+    border: 5px solid green;
+    overflow: hidden;
 }
 
 .items {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
     width: 100%;
-    gap: 10px;
+    margin: auto;
 }
 
-.row {
-    width: 50%;
-    background-color: rgb(246, 246, 246);
+#row {
+    width: 100%;
+    background-color: rgb(231, 229, 229);
+    margin: 1%;
+    padding: 0;
+    position: relative;
+    height: 280px;
+}
 
+#img-item {
+    width: 30%;
+    padding: 0;
+    height: 280px;
+}
+
+#img-item img {
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    height: 100%;
+}
+
+#tekst-container {
+    width: 70%;
+    padding: 40px;
 }
 
 .available {
@@ -172,13 +210,22 @@ export default {
     font-weight: bold;
 }
 
-.nav-link {
-    font-weight: bold;
-}
 
 .not-available {
     color: red;
     font-weight: bold;
+}
 
+#card-title {
+    margin-bottom: 20px;
+}
+#availability-text{
+    position: absolute;
+    bottom: 10px;
+}
+@media only screen and (min-width: 1000px) {
+    #row {
+        width: 45%;
+    }
 }
 </style>

@@ -4,7 +4,8 @@ export default {
     data() {
         return {
             users: [],
-            sessionStorage: JSON.parse(sessionStorage.getItem("user"))
+            sessionStorage: JSON.parse(sessionStorage.getItem("user")),
+            searchText: '',
         }
     },
     methods: {
@@ -14,16 +15,50 @@ export default {
             this.users = final.map(m => m);
         },
         makeAdmin(user) {
-            // Implementeer de logica om een gebruiker tot admin te maken
-            console.log('Make admin:', user);
+            fetch(`http://localhost:8080/users/${user.id}/admin?isAdmin=${true}`, {
+                method: 'PUT'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Make admin:', user.id);
+                        this.getData();
+                    } else {
+                        console.error('Failed to make admin:', response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error making admin:', error);
+                });
         },
         removeAdmin(user) {
-            // Implementeer de logica om de admin-status van een gebruiker te verwijderen
-            console.log('Remove admin:', user);
+            fetch(`http://localhost:8080/users/${user.id}/admin?isAdmin=${false}`, {
+                method: 'PUT'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Make admin:', user.id);
+                        this.getData();
+                    } else {
+                        console.error('Failed to make admin:', response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error making admin:', error);
+                });
         },
     },
     mounted() {
         this.getData();
+    },
+    computed: {
+        filteredUsers() {
+            const searchQuery = this.searchText.trim().toLowerCase();
+            if (searchQuery === '') {
+                return this.users;
+            } else {
+                return this.users.filter(user => user.email.toLowerCase().includes(searchQuery));
+            }
+        }
     },
     components: {
         Nav
@@ -36,7 +71,12 @@ export default {
         <Nav />
     </header>
     <main>
-        <div class="container">
+        <h3>Alle gebruikers</h3>
+        <div id="container-users">
+            <div id="filter">
+                <input class="form-control mb-4" id="search-input" type="text" v-model="searchText" @keyup="searchUser"
+                    placeholder="Zoek op email">
+            </div>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -44,16 +84,16 @@ export default {
                         <th>Voornaam</th>
                         <th>Achternaam</th>
                         <th>E-mail</th>
-                        <th>Admin</th>
+                        <th class="td-btn">Admin</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="user in users" :key="user.id">
+                    <tr v-for="user in this.filteredUsers" :key="user.id">
                         <td v-if="user.email !== this.sessionStorage.email">{{ user.id }}</td>
                         <td v-if="user.email !== this.sessionStorage.email">{{ user.firstName }}</td>
                         <td v-if="user.email !== this.sessionStorage.email">{{ user.lastName }}</td>
                         <td v-if="user.email !== this.sessionStorage.email">{{ user.email }}</td>
-                        <td v-if="user.email !== this.sessionStorage.email">
+                        <td class="td-btn" v-if="user.email !== this.sessionStorage.email">
                             <button v-if="!user.isAdmin" @click="makeAdmin(user)" class="btn btn-primary">Maak
                                 admin</button>
                             <button v-else @click="removeAdmin(user)" class="btn btn-secondary">Verwijder admin</button>
@@ -64,3 +104,15 @@ export default {
         </div>
     </main>
 </template>
+
+<style>
+#container-users {
+    width: 90%;
+    margin: auto;
+    margin-top: 2%;
+}
+
+.td-btn {
+    text-align: right;
+}
+</style>

@@ -39,6 +39,21 @@ const router = createRouter({
             name: 'getAllUsers',
             component: () => import('../components/GetAllUsers.vue')
         },
+        {
+            path: '/itemDetails/:id',
+            name: 'itemDetails',
+            component: () => import('../components/ItemDetails.vue')
+        },
+        {
+            path: '/history',
+            name: 'history',
+            component: () => import('../components/History.vue')
+        },
+        {
+            path: '/myloans',
+            name: 'myloans',
+            component: () => import('../components/MyLoans.vue')
+        },
     ]
 })
 
