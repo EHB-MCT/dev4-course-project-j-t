@@ -146,4 +146,19 @@ class LoanController {
         return ResponseEntity.ok(loanService.getAllLoansFromUser(id))
     }
 
+    @GetMapping("/item/{itemId}")
+    fun getLoanByItemId(@PathVariable("itemId")  itemId:Long):  ResponseEntity<Loan> {
+//        val loan = loanService.getLoan(id)
+//        val loanDto = LoanDto(
+//            description = loan.description,
+//            startDate = loan.startDate,
+//            endDate = loan.endDate,
+//            id = loan.id,
+//            user = loan.user?.id,
+//            item = loan.item?.id,
+//
+//        )
+//        return ResponseEntity.ok(loanDto)
+        return ResponseEntity.ok(loanService.getLoanByItemId(itemId))
+    }
 }
