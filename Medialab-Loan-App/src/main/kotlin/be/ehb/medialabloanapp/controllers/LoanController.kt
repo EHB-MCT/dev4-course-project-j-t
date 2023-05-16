@@ -1,7 +1,7 @@
 package be.ehb.medialabloanapp.controllers
 
-import be.ehb.medialabloanapp.dto.HistoryLoanDto
 import be.ehb.medialabloanapp.dto.LoanDto
+import be.ehb.medialabloanapp.models.HistoryLoan
 import be.ehb.medialabloanapp.models.Loan
 import be.ehb.medialabloanapp.services.ItemService
 import be.ehb.medialabloanapp.services.LoanService
@@ -95,19 +95,19 @@ class LoanController {
 
     // get all the loans that were made in the past (history)
     @GetMapping("/history")
-    fun getAllHistory(): ResponseEntity<List<HistoryLoanDto>>{
-        val loans = loanService.getAllHistory().map{loan ->
-            HistoryLoanDto(
-                id = loan.id,
-                description = loan.description,
-                startDate = loan.startDate,
-                endDate = loan.endDate,
-                userId = loan.userId,
-                itemId = loan.itemId,
-                loanId = loan.loanId,
-            )
-        }
-        return ResponseEntity.ok(loans)
+    fun getAllHistory(): ResponseEntity<List<HistoryLoan>>{
+//        val loans = loanService.getAllHistory().map{loan ->
+//            HistoryLoanDto(
+//                id = loan.id,
+//                description = loan.description,
+//                startDate = loan.startDate,
+//                endDate = loan.endDate,
+//                user = loan.user,
+//                item = loan.item,
+//
+//            )
+//        }
+        return ResponseEntity.ok(loanService.getAllHistory())
     }
 
 
