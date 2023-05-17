@@ -7,7 +7,8 @@ export default {
       email: '',
       password: '',
       isAdmin: false,
-      errorMessage: null
+      errorMessage: null,
+      successMessage: null,
     }
   },
   methods: {
@@ -27,22 +28,38 @@ export default {
             if (data.status == 500) {
               this.errorMessage = data.message
             } else {
-              sessionStorage.setItem("user", JSON.stringify(data))
-              this.$router.push('/')
+              this.showSuccessMessage('Registratie succesvol!');
+              setTimeout(() => {
+                sessionStorage.setItem("user", JSON.stringify(data))
+                this.$router.push('/')
+              }, 5000);
+
             }
           })
       } else {
-        this.errorMessage = "Fill in all fields."
+        this.errorMessage = "Vul alle velden in."
       }
 
     },
     login() {
       this.$router.push('/')
-    }
+    },
+    showSuccessMessage(message) {
+      this.successMessage = message;
+      setTimeout(() => {
+        this.successMessage = null;
+      }, 4000);
+    },
   }
 }
 </script>
 <template>
+  <div class="shade" v-if="successMessage"> </div>
+  <div v-if="successMessage" class="success-message">
+    {{ successMessage }}
+    <i class="fas fa-check-circle success-icon"></i>
+
+  </div>
   <div id="container">
     <form id="chatForm" @submit.prevent="register">
       <img src="../../public/images/logo-ehb-small.png" alt="" id="logo">
@@ -69,3 +86,54 @@ export default {
     </form> <br>
   </div>
 </template>
+
+<style>
+.success-message {
+  width: 50%;
+  height: 300px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: lightgreen;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: fade-in 0.3s ease-out;
+  z-index: 55;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 40px;
+  color: green;
+}
+
+.success-message i {
+  margin-top: 50px;
+  font-size: 50px;
+}
+
+.shade {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  animation: fade-in 0.3s ease-out;
+  z-index: 50;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+</style>

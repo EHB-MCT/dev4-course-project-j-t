@@ -134,7 +134,7 @@ export default {
 }
 
 .red-background {
-    background-color: rgba(255, 0, 0, 0.381) !important
+    background-color: rgba(255, 70, 70, 0.381) !important
 }
 
 #green {
@@ -143,7 +143,7 @@ export default {
 
 @keyframes colorFade {
     0% {
-        background-color: rgba(255, 166, 0, 0.5);
+        background-color: rgba(255, 195, 84, 0.5);
     }
 
     50% {
@@ -151,7 +151,7 @@ export default {
     }
 
     100% {
-        background-color: rgba(255, 166, 0, 0.5);
+        background-color: rgba(255, 195, 84, 0.5);
     }
 }
 </style>
