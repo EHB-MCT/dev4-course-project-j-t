@@ -1,11 +1,10 @@
 <script>
 import Nav from './Nav.vue'
-
 export default {
-
     data() {
         return {
             item: "",
+            infoUser: "",
             itemId: this.$route.params.id,
             isAdmin: JSON.parse(sessionStorage.getItem("user"))
         }
@@ -15,6 +14,19 @@ export default {
             const res = await fetch(`http://localhost:8080/items/${this.itemId}`);
             const finalRes = await res.json();
             this.item = finalRes;
+            try {
+                const res1 = await fetch(`http://localhost:8080/loans/item/${this.itemId}`);
+                if (res1.ok) {
+                    const finalRes1 = await res1.json();
+                    this.infoUser = finalRes1;
+                } else {
+                    // Handel de situatie af waarin de link niet beschikbaar is
+                    console.error('De link is niet beschikbaar');
+                }
+            } catch (error) {
+                // Handel eventuele fouten af bij het uitvoeren van de fetch-aanroep
+                console.error('Er is een fout opgetreden bij het ophalen van de data:', error);
+            }
         },
         async deleteItem(itemId) {
             const confirmed = window.confirm('Weet u zeker dat u dit item wilt verwijderen?');
@@ -24,10 +36,7 @@ export default {
                 });
                 this.items = this.items.filter(item => item.id !== itemId);
             }
-
         },
-
-
     },
     mounted() {
         this.getData();
@@ -35,19 +44,16 @@ export default {
     components: {
         Nav
     }
-
 }
 </script>
 <template>
     <header>
         <Nav />
-
     </header>
     <main>
         <h3>Welkom {{ this.isAdmin.firstName }}</h3>
-
         <div class="items">
-            <div class="row" id="row" :key="item.id">
+            <div id="row" :key="item.id">
                 <div class="col-md-4" v-if="item.img" id="img-item">
                     <img class="img-fluid" :src="item.img">
                 </div>
@@ -67,6 +73,17 @@ export default {
                 </div>
             </div>
         </div>
+        <div id="info" v-if="infoUser && infoUser.user">
+            <b-card>
+                <h4>Meer informatie</h4><br>
+                <p class="card-text"> <b> Dit item is uitgeleend aan:</b>
+                    {{ infoUser.user.firstName }}
+                    {{ infoUser.user.lastName }}</p>
+                <p class="card-text"> <b> Email:</b> {{ infoUser.user.email }}</p>
+                <p class="card-text"> <b> Begin datum: </b>{{ infoUser.startDate }}</p>
+                <p class="card-text"> <b> Eind datum: </b>{{ infoUser.endDate }}</p>
+            </b-card>
+        </div>
     </main>
 </template>
 
@@ -78,12 +95,13 @@ export default {
     background-color: rgb(231, 229, 229);
 }
 
-.row {
+#row {
     width: 100%;
     background-color: rgb(231, 229, 229);
     padding: 0;
     position: relative;
     height: 275px;
+    display: flex;
 }
 
 #img-item {
@@ -108,7 +126,6 @@ export default {
     color: rgb(0, 194, 0);
     font-weight: bold;
 }
-
 
 .not-available {
     color: red;
@@ -138,5 +155,12 @@ export default {
 #availability-text {
     position: absolute;
     bottom: 30px;
+}
+
+#info {
+    width: 90%;
+    margin: auto;
+    padding: 20px;
+    background-color: rgb(231, 229, 229);
 }
 </style>

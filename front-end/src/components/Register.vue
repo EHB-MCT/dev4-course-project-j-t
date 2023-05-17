@@ -45,6 +45,7 @@ export default {
 <template>
   <div id="container">
     <form id="chatForm" @submit.prevent="register">
+      <img src="../../public/images/logo-ehb-small.png" alt="" id="logo">
       <div class="form-group">
         <label for="firstName">First Name</label>
         <input type="text" class="form-control" id="firstName" v-model="firstName">
