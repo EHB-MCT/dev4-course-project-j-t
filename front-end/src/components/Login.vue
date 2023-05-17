@@ -42,7 +42,9 @@ export default {
   
 <template>
   <div id="container">
+
     <form id="chatForm" @submit.prevent="login">
+      <img src="../../public/images/logo-ehb-small.png" alt="" id="logo">
       <div class="form-group">
         <label for="email">E-mail</label>
         <input type="email" class="form-control" id="email" v-model="email">
@@ -61,8 +63,13 @@ export default {
 </template>
   
 <style>
+#logo {
+  width: 50%;
+  margin-bottom: 50px;
+}
+
 #container {
-  background-image: url("../../public/pexels-kritsada-seekham-7836295.jpg");
+  background-image: url("../../public/images/background-blue.min.svg");
   background-position: top;
   background-size: cover;
   width: 100%;
@@ -74,7 +81,7 @@ export default {
 
 #chatForm {
   width: 40%;
-  background-color: rgba(255, 255, 255, 0.685);
+  background-color: rgba(205, 205, 205, 0.5);
   padding: 80px 50px;
   color: black;
   font-size: 1.5rem;

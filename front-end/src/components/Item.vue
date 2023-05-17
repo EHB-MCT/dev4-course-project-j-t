@@ -16,7 +16,6 @@ export default {
       const res = await fetch("http://localhost:8080/items");
       const finalRes = await res.json();
       this.items = finalRes.map(m => m);
-      // this.items = this.items.reverse()
       console.log(this.isAdmin.isAdmin)
     },
 
@@ -76,7 +75,7 @@ export default {
       </button>
 
     </div>
-    <div class="items">
+    <div class="items" id="items">
       <div class="row" id="row" v-for="item in this.filteredItems" :key="item.id">
         <div class="col-md-4" v-if="item.img" id="img-item">
           <img class="img-fluid" :src="item.img">
