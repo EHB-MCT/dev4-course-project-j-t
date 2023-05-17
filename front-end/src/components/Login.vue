@@ -29,7 +29,7 @@ export default {
             }
           })
       } else {
-        this.errorMessage = "Fill in all fields."
+        this.errorMessage = "Vul alle velden in."
       }
     },
     async register() {

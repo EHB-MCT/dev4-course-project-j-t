@@ -8,6 +8,7 @@ export default {
       items: [],
       isAdmin: JSON.parse(sessionStorage.getItem("user")),
       searchText: '',
+      successMessage: null,
     }
   },
   methods: {
@@ -17,12 +18,13 @@ export default {
       this.loans = finalLoans.map(m => m);
     },
     async deleteLoan(loanId) {
-      const confirmed = window.confirm('Are you sure you want to delete this loan?');
+      const confirmed = window.confirm('Weet u zeker dat u deze lening wilt verwijderen?');
       if (confirmed) {
         await fetch(`http://localhost:8080/loans/${loanId}`, {
           method: "DELETE"
         });
         this.loans = this.loans.filter(loan => loan.id !== loanId);
+        this.showSuccessMessage('De lening is succesvol verwijderd!');
       }
 
     },
@@ -64,6 +66,12 @@ export default {
       // Compare the end date with today's date
       return loanEndDate < today;
     },
+    showSuccessMessage(message) {
+      this.successMessage = message;
+      setTimeout(() => {
+        this.successMessage = null;
+      }, 5000); // Verwijder het bericht na 3 seconden (3000 milliseconden)
+    },
   },
   mounted() {
     this.getData();
@@ -85,7 +93,14 @@ export default {
     <Nav />
   </header>
   <main>
+    <div class="shade" v-if="successMessage"> </div>
     <h3>Welkom {{ this.isAdmin.firstName }}</h3>
+    <div v-if="successMessage" class="success-message">
+      {{ successMessage }}
+      <i class="fas fa-check-circle success-icon"></i>
+
+    </div>
+
     <div id="container-loans">
       <div id="filter">
         <input class="form-control mb-4" id="search-input" type="text" v-model="searchText" @keyup="searchItems"
@@ -164,6 +179,55 @@ export default {
 
 #green {
   background-color: lightgreen;
+}
+
+.success-message {
+  width: 50%;
+  height: 300px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: lightgreen;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: fade-in 0.3s ease-out;
+  z-index: 55;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 40px;
+  color: green;
+}
+
+.success-message i {
+  margin-top: 50px;
+  font-size: 50px;
+}
+
+.shade {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  animation: fade-in 0.3s ease-out;
+  z-index: 50;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes colorFade {

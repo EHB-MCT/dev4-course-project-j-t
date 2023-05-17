@@ -43,21 +43,24 @@ export default {
                     .then((data) => {
                         if (data.status == 500) {
                             this.errorMessage = data.message
-
                         } else {
                             this.classAlert = true
-                            this.errorMessage = "Item created successfully"
+                            this.errorMessage = "De lening is succesvol aangemaakt"
                             setTimeout(() => {
                                 this.errorMessage = null
                                 this.selectedUser = null
                                 this.selectedItem = null
                                 this.startDate = null
                                 this.endDate = null
-                            }, 5000);
+                            }, 3500);
                         }
                     })
             } else {
-                this.errorMessage = "Fill in all fields."
+                this.errorMessage = "Vul alle velden in!"
+                setTimeout(() => {
+                    this.errorMessage = null
+                }, 3500);
+
             }
         },
         selectItem(item) {
@@ -90,6 +93,7 @@ export default {
         <Nav />
     </header>
     <main>
+        <div class="shade" v-if="errorMessage"></div>
         <div id="container-createLoan">
             <div id="err-message" v-if="errorMessage" :class="['alert', classAlert ? 'alert-success' : 'alert-danger']">{{
                 this.errorMessage }}
@@ -219,10 +223,44 @@ export default {
 #card-title {
     margin-bottom: 20px;
 }
-#availability-text{
+
+#availability-text {
     position: absolute;
     bottom: 10px;
 }
+
+#err-message {
+    width: 50%;
+    height: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    animation: fade-in 0.3s ease-out;
+    z-index: 55;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 40px;
+}
+
+.shade {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    animation: fade-in 0.3s ease-out;
+    z-index: 50;
+}
+
 @media only screen and (min-width: 1000px) {
     #row {
         width: 45%;

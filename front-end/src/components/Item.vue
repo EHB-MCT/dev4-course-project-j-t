@@ -9,6 +9,7 @@ export default {
       isAdmin: JSON.parse(sessionStorage.getItem("user")),
       searchText: '',
       showAvailableItems: false,
+      successMessage: null,
     }
   },
   methods: {
@@ -26,14 +27,22 @@ export default {
           method: "DELETE"
         });
         this.items = this.items.filter(item => item.id !== itemId);
+        this.showSuccessMessage('Item is succesvol verwijderd!');
       }
 
     }, navigateToDetail(itemId) {
       this.$router.push({ name: 'itemDetails', params: { id: itemId } });
     }, toggleAvailableItems() {
       this.showAvailableItems = !this.showAvailableItems;
-    }
+    },
+    showSuccessMessage(message) {
+      this.successMessage = message;
+      setTimeout(() => {
+        this.successMessage = null;
+      }, 5000); // Verwijder het bericht na 3 seconden (3000 milliseconden)
+    },
   },
+
   mounted() {
     this.getData();
   },
@@ -66,7 +75,13 @@ export default {
     <Nav />
   </header>
   <main>
+    <div class="shade" v-if="successMessage"> </div>
     <h3>Welkom {{ this.isAdmin.firstName }}</h3>
+    <div v-if="successMessage" class="success-message">
+      {{ successMessage }}
+      <i class="fas fa-check-circle success-icon"></i>
+
+    </div>
     <div id="filter">
       <input class="form-control mb-4" id="search-input" type="text" v-model="searchText" @keyup="searchItems"
         placeholder="Zoek op artikelnaam">
@@ -183,6 +198,55 @@ export default {
 
 #search-input {
   width: 85%;
+}
+
+.success-message {
+  width: 50%;
+  height: 300px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: lightgreen;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: fade-in 0.3s ease-out;
+  z-index: 55;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 40px;
+  color: green;
+}
+
+.success-message i {
+  margin-top: 50px;
+  font-size: 50px;
+}
+
+.shade {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  animation: fade-in 0.3s ease-out;
+  z-index: 50;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 @media only screen and (min-width: 1000px) {
