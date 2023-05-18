@@ -29,7 +29,25 @@ export default {
 
     },
     sortLoans(column) {
-      if (column === 'endDate') {
+      if (column === 'valid') {
+        if (this.sortColumn === column) {
+          // Reverse the sort direction if the same column header is clicked
+          this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+          // Set the sort column and default sort direction for a new column header
+          this.sortColumn = column;
+          this.sortDirection = 'asc';
+        }
+
+        // Sort the loans array based on the selected column and direction
+        this.loans.sort((a, b) => {
+          if (this.sortDirection === 'asc') {
+            return a.endDate.localeCompare(b.endDate);
+          } else {
+            return b.endDate.localeCompare(a.endDate);
+          }
+        });
+      }else if (column == "expired"){
         if (this.sortColumn === column) {
           // Reverse the sort direction if the same column header is clicked
           this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -107,11 +125,11 @@ export default {
           placeholder="Zoek op artikelnaam">
 
         <div id="sort-options">
-          <label for="sort-end-date">Sorteer op einddatum:</label>
-          <select id="sort-end-date" v-model="sortColumn" @change="sortLoans(sortColumn)">
-            <option value="">Geen</option>
-            <option value="endDate">Oplopend</option>
-            <option value="endDate">Aflopend</option>
+          <label for="sort-end-date">Sorteer op:</label>
+          <select id="sort-end-date" v-model="sortColumn" @change="sortLoans(sortColumn)" >
+  
+            <option value="expired">Verlopen eerst</option>
+            <option value="valid">Nog geldig eerst</option>
           </select>
         </div>
 
@@ -180,6 +198,12 @@ export default {
 #green {
   background-color: lightgreen;
 }
+
+#sort-end-date{
+  margin-left: 15px;
+  height: 40px;
+}
+
 
 .success-message {
   width: 50%;

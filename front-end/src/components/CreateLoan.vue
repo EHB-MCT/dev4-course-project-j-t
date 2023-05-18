@@ -52,7 +52,10 @@ export default {
                                 this.selectedItem = null
                                 this.startDate = null
                                 this.endDate = null
+                               
+                               location.reload();
                             }, 3500);
+
                         }
                     })
             } else {
@@ -98,7 +101,7 @@ export default {
             <div id="err-message" v-if="errorMessage" :class="['alert', classAlert ? 'alert-success' : 'alert-danger']">{{
                 this.errorMessage }}
             </div>
-            <h1>Create new loan</h1><br>
+            <h2>Maak een lening aan:</h2><br>
             <form @submit.prevent="createLoan">
                 <div class="form-group">
                     <label for="selectUser">Selecteer gebruiker:</label>
@@ -124,7 +127,7 @@ export default {
                     <input type="date" id="startDate" class="form-control" v-model="startDate">
                 </div><br>
                 <div class="form-group">
-                    <label for="endDate">Einddatum:</label>
+                    <label for="endDate">Eind datum:</label>
                     <input type="date" id="endDate" class="form-control" v-model="endDate">
                 </div><br>
                 <button type="submit" class="btn btn-primary">Nieuwe lening maken</button>

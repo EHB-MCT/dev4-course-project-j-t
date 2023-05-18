@@ -35,7 +35,7 @@ export default {
                         <th>Gebruikers</th>
                         <th>Item</th>
                         <th>Beschrijving</th>
-                        <th>Begonnen datum</th>
+                        <th>Begin datum</th>
                         <th>Eind datum</th>
                     </tr>
                 </thead>
